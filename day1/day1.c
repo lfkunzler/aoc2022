@@ -30,7 +30,8 @@ int main(int argc, char** argv)
     FILE* fd_input;
     char buff[32];
     int aux;
-    unsigned int most_calories, curr_calories;
+    unsigned int most_calories[3] = {0};
+    unsigned int curr_calories;
 
     if (argc != 2) {
         printf("Bad usage. Pass input file as argument, eg: %s <input.txt>\n", argv[0]);
@@ -42,17 +43,24 @@ int main(int argc, char** argv)
         exit(EXIT_FAILURE);
     }
 
-    most_calories = 0;
     curr_calories = 0;
     while (fgets(buff, 32, fd_input)) {
         printf(">>> %s", buff);
         rm_newline(buff);
         if (*buff == 0) {
             printf("will reset calories | curr counter :: %u\n", curr_calories);
-            if (curr_calories > most_calories) {
-                printf("current max calories   :: %u\n", most_calories);
-                printf("new value max calories :: %u\n", curr_calories);
-                most_calories = curr_calories;
+            if (curr_calories > most_calories[0]) {
+                aux = most_calories[0];
+                most_calories[0] = curr_calories;
+                curr_calories = aux;
+            }
+            if (curr_calories > most_calories[1]) {
+                aux = most_calories[1];
+                most_calories[1] = curr_calories;
+                curr_calories = aux;
+            }
+            if (curr_calories > most_calories[2]) {
+                most_calories[2] = curr_calories;
             }
             curr_calories = 0;
             continue;
@@ -68,7 +76,8 @@ int main(int argc, char** argv)
         printf("current counter of calories :: %u\n", curr_calories);
     }
 
-    printf("most calories :: %u\n", most_calories);
     fclose(fd_input);
+
+    printf("most calories :: %u\n", most_calories[0]+most_calories[1]+most_calories[2]);
     return 0;
 }
